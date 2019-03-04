@@ -92,6 +92,14 @@ def transformer_prepare_encoder(inputs, target_space, hparams, features=None):
         if hparams.activation_dtype == "bfloat16" else tf.float32)
     emb_target_space = tf.reshape(emb_target_space, [1, 1, -1])
     encoder_input += emb_target_space
+
+  # apply (sub)word dropout
+  # encoder_input is of shape [batch_size, max_len, hidden_size]
+  word_dropout_rate = hparams.get("word_dropout_rate", 0.0)
+  if word_dropout_rate:
+    mask = tf.random_uniform([tf.shape(encoder_input)[0], tf.shape(encoder_input)[1], 1])
+    encoder_input *= tf.to_float(tf.greater_equal(mask, word_dropout_rate))
+
   if hparams.pos == "timing":
     if inputs_position is not None:
       encoder_input = common_attention.add_timing_signal_1d_given_position(
