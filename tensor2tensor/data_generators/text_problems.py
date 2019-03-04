@@ -184,6 +184,11 @@ class Text2TextProblem(problem.Problem):
     """
     return 0
 
+  @property
+  def do_weighting(self):
+    """Whether to weight target subwords by provided weights."""
+    return False
+
   # END: Subclass interface
 
   @property
@@ -361,6 +366,10 @@ class Text2TextProblem(problem.Problem):
 
   def example_reading_spec(self):
     data_fields = {"targets": tf.VarLenFeature(tf.int64)}
+
+    if self.do_weighting:
+      data_fields["weights"] = tf.VarLenFeature(tf.int64)
+
     if self.has_inputs:
       data_fields["inputs"] = tf.VarLenFeature(tf.int64)
 

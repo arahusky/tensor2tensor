@@ -599,6 +599,10 @@ class T2TModel(base.Layer):
           explicit_weights = common_layers.expand_squeeze_to_nd(
               weights, modality_weights.shape.ndims)
 
+        explicit_weights = tf.pad(explicit_weights,
+                                  [[0, 0], [0, tf.shape(modality_weights)[1] - tf.shape(explicit_weights)[1]], [0, 0], [0, 0]],
+                                  mode='constant', constant_values=0)
+
         return explicit_weights * modality_weights
 
       # Ensure that target.modality_loss() supports "weights_fn" keyword
@@ -678,7 +682,7 @@ class T2TModel(base.Layer):
           logits,
           target_modality,
           features["targets"],
-          weights=features.get("targets_mask"))
+          weights=tf.to_float(features.get('weights')) if 'weights' in features else features.get('target_weights'))
 
   def optimize(self, loss, num_async_replicas=1, use_tpu=False):
     """Return a training op minimizing loss."""
