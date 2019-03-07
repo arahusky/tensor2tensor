@@ -95,10 +95,10 @@ def transformer_prepare_encoder(inputs, target_space, hparams, features=None):
 
   # apply (sub)word dropout
   # encoder_input is of shape [batch_size, max_len, hidden_size]
-  word_dropout_rate = hparams.get("word_dropout_rate", 0.0)
-  if word_dropout_rate:
+  input_word_dropout_rate = hparams.get("input_word_dropout_rate", 0.0)
+  if input_word_dropout_rate:
     mask = tf.random_uniform([tf.shape(encoder_input)[0], tf.shape(encoder_input)[1], 1])
-    encoder_input *= tf.to_float(tf.greater_equal(mask, word_dropout_rate))
+    encoder_input *= tf.to_float(tf.greater_equal(mask, input_word_dropout_rate))
 
   if hparams.pos == "timing":
     if inputs_position is not None:
