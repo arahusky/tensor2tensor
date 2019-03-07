@@ -1206,7 +1206,16 @@ def transformer_prepare_decoder(targets, hparams, features=None):
   if hparams.proximity_bias:
     decoder_self_attention_bias += common_attention.attention_bias_proximal(
         common_layers.shape_list(targets)[1])
-  decoder_input = common_layers.shift_right_3d(targets)
+
+  # apply (sub)word dropout
+  # encoder_input is of shape [batch_size, max_len, hidden_size]
+  decoder_input = targets
+  target_word_dropout_rate = hparams.get("target_word_dropout_rate", 0.0)
+  if target_word_dropout_rate:
+    mask = tf.random_uniform([tf.shape(decoder_input)[0], tf.shape(decoder_input)[1], 1])
+    decoder_input *= tf.to_float(tf.greater_equal(mask, target_word_dropout_rate))
+
+  decoder_input = common_layers.shift_right_3d(decoder_input)
   if hparams.pos == "timing":
     if targets_position is not None:
       decoder_input = common_attention.add_timing_signal_1d_given_position(
