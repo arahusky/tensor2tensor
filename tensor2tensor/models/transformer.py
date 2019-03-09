@@ -1430,6 +1430,9 @@ def transformer_base_v1():
   # For making a transformer encoder unidirectional by using masked
   # attention.
   hparams.add_hparam("unidirectional_encoder", False)
+
+  hparams.add_hparam("input_word_dropout_rate", 0.0)
+  hparams.add_hparam("target_word_dropout_rate", 0.0)
   return hparams
 
 
