@@ -165,7 +165,6 @@ def main(_):
   trainer_lib.set_random_seed(FLAGS.random_seed)
   usr_dir.import_usr_dir(FLAGS.t2t_usr_dir)
 
-
   if FLAGS.score_file:
     filename = os.path.expanduser(FLAGS.score_file)
     if not tf.gfile.Exists(filename):
@@ -181,7 +180,6 @@ def main(_):
 
   hp = create_hparams()
   decode_hp = create_decode_hparams()
-
   estimator = trainer_lib.create_estimator(
       FLAGS.model,
       hp,

@@ -1210,10 +1210,10 @@ def transformer_prepare_decoder(targets, hparams, features=None):
   # apply (sub)word dropout
   # encoder_input is of shape [batch_size, max_len, hidden_size]
   decoder_input = targets
-  target_word_dropout_rate = hparams.get("target_word_dropout_rate", 0.0)
-  if target_word_dropout_rate:
+  target_word_dropout = hparams.get("target_word_dropout", 0.0)
+  if target_word_dropout:
     mask = tf.random_uniform([tf.shape(decoder_input)[0], tf.shape(decoder_input)[1], 1])
-    decoder_input *= tf.to_float(tf.greater_equal(mask, target_word_dropout_rate))
+    decoder_input *= tf.to_float(tf.greater_equal(mask, target_word_dropout))
 
   decoder_input = common_layers.shift_right_3d(decoder_input)
   if hparams.pos == "timing":
@@ -1431,8 +1431,9 @@ def transformer_base_v1():
   # attention.
   hparams.add_hparam("unidirectional_encoder", False)
 
-  hparams.add_hparam("input_word_dropout_rate", 0.0)
-  hparams.add_hparam("target_word_dropout_rate", 0.0)
+  hparams.add_hparam("input_word_dropout", 0.0)
+  hparams.add_hparam("target_word_dropout", 0.0)
+  hparams.add_hparam("edit_weight_mle", 1.0)
   return hparams
 
 

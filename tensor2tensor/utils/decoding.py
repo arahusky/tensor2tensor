@@ -458,7 +458,7 @@ def decode_from_file(estimator,
           beam_scores.append(score)
       if decode_hp.write_beam_scores:
         decodes.append("\t".join([
-            "\t".join([d, "%.2f" % s])
+            "\t".join([d.replace("\n", " ").replace("\t", " "), "%.2f" % s])
             for d, s in zip(beam_decodes, beam_scores)
         ]))
       else:
@@ -492,7 +492,7 @@ def decode_from_file(estimator,
   tf.logging.info("Writing decodes into %s" % decode_filename)
   outfile = tf.gfile.Open(decode_filename, "w")
   for index in range(len(sorted_inputs)):
-    outfile.write("%s%s" % (decodes[sorted_keys[index]], decode_hp.delimiter))
+    outfile.write("%s%s" % (decodes[sorted_keys[index]].replace("\n", " ").replace("\t", " "), decode_hp.delimiter))
   outfile.flush()
   outfile.close()
 
